@@ -14,13 +14,19 @@ object CEMainForm: TCEMainForm
   OnResize = FormResize
   OnWindowStateChange = FormWindowStateChange
   ShowHint = True
+  LCLVersion = '1.8.4.0'
   Visible = False
   object mainMenu: TMainMenu
     top = 1
     object MenuItem1: TMenuItem
       Caption = 'File'
+      OnClick = MenuItem1Click
       object MenuItem5: TMenuItem
         Action = actFileNew
+      end
+      object MenuItem117: TMenuItem
+        Caption = 'New'
+        OnClick = MenuItem117Click
       end
       object MenuItem24: TMenuItem
         Action = actFileNewRun
@@ -37,6 +43,7 @@ object CEMainForm: TCEMainForm
       object mnuItemMruFile: TMenuItem
         Caption = 'Open recent file'
         ImageIndex = 9
+        OnClick = mnuItemMruFileClick
       end
       object MenuItem43: TMenuItem
         Action = actFileClose
@@ -49,6 +56,7 @@ object CEMainForm: TCEMainForm
       end
       object MenuItem6: TMenuItem
         Caption = '-'
+        OnClick = MenuItem6Click
       end
       object MenuItem4: TMenuItem
         Action = actFileSave
@@ -122,6 +130,7 @@ object CEMainForm: TCEMainForm
     end
     object MenuItem7: TMenuItem
       Caption = 'Edit'
+      OnClick = MenuItem7Click
       object MenuItem15: TMenuItem
         Action = actEdCopy
       end
@@ -173,6 +182,7 @@ object CEMainForm: TCEMainForm
     end
     object MenuItem14: TMenuItem
       Caption = 'Project'
+      OnClick = MenuItem14Click
       object mnuProjNew: TMenuItem
         Caption = 'New project'
         object mnuItemDubDialog: TMenuItem
@@ -398,6 +408,7 @@ object CEMainForm: TCEMainForm
     end
     object mnuItemHelp: TMenuItem
       Caption = 'Help'
+      OnClick = mnuItemHelpClick
       object mnuItemAbout: TMenuItem
         Caption = 'About  dexed and tools information'
         OnClick = mnuItemAboutClick

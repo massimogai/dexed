@@ -1,0 +1,133 @@
+inherited CENewWidget: TCENewWidget
+  Left = 713
+  Height = 394
+  Top = 245
+  Width = 848
+  AutoSize = True
+  BorderIcons = [biSystemMenu, biMinimize, biMaximize]
+  BorderStyle = bsDialog
+  Caption = 'Class Wizard'
+  ClientHeight = 394
+  ClientWidth = 848
+  inherited Back: TPanel
+    Height = 373
+    Width = 779
+    AutoSize = True
+    ClientHeight = 373
+    ClientWidth = 779
+    inherited Content: TPanel
+      Height = 337
+      Top = 36
+      Width = 779
+      AutoSize = False
+      ClientHeight = 337
+      ClientWidth = 779
+      OnClick = ContentClick
+      object CreateButton: TButton[0]
+        Left = 704
+        Height = 28
+        Top = 309
+        Width = 75
+        Caption = 'Create'
+        OnClick = CreateButtonClick
+        TabOrder = 0
+      end
+      object CancelButton: TButton[1]
+        Left = 592
+        Height = 25
+        Top = 309
+        Width = 75
+        Caption = 'Cancel'
+        OnClick = CancelButtonClick
+        TabOrder = 1
+      end
+      object TypeListBox: TListBox[2]
+        Left = 10
+        Height = 310
+        Top = 10
+        Width = 238
+        ItemHeight = 0
+        OnClick = TypeListBoxClick
+        ScrollWidth = 236
+        TabOrder = 2
+        TopIndex = -1
+      end
+      object ClassNameEditBox: TEdit[3]
+        Left = 488
+        Height = 36
+        Top = 160
+        Width = 272
+        OnChange = ClassNameEditBoxChange
+        TabOrder = 3
+        Text = 'NewClass'
+      end
+      object Label1: TLabel[4]
+        Left = 384
+        Height = 19
+        Top = 216
+        Width = 68
+        Caption = 'FIle Name'
+        ParentColor = False
+      end
+      object Label3: TLabel[5]
+        Left = 376
+        Height = 1
+        Top = 40
+        Width = 1
+        ParentColor = False
+      end
+      object Label2: TLabel[6]
+        Left = 376
+        Height = 19
+        Top = 8
+        Width = 194
+        Caption = 'Create new Class or Interface'
+        ParentColor = False
+      end
+      object AddProjectCheckBox: TCheckBox[7]
+        Left = 384
+        Height = 23
+        Top = 248
+        Width = 176
+        Caption = 'Add to Current Project.'
+        TabOrder = 4
+      end
+      object ClassNameLabel: TLabel[8]
+        Left = 384
+        Height = 19
+        Top = 168
+        Width = 76
+        Caption = 'ClassName'
+        ParentColor = False
+      end
+      object FileNameLabel: TLabel[9]
+        Left = 488
+        Height = 19
+        Top = 216
+        Width = 101
+        Caption = 'FileNameLabel'
+        ParentColor = False
+      end
+      object PackageLabel: TLabel[10]
+        Left = 384
+        Height = 19
+        Top = 120
+        Width = 55
+        Caption = 'Package'
+        ParentColor = False
+      end
+      object PakageEdit: TEdit[11]
+        Left = 488
+        Height = 36
+        Top = 112
+        Width = 272
+        OnChange = PakageEditChange
+        TabOrder = 5
+      end
+    end
+    inherited toolbar: TCEToolBar
+      Width = 771
+      Transparent = False
+    end
+  end
+end

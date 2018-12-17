@@ -16,7 +16,7 @@ uses
   ce_toolseditor, ce_procinput, ce_optionseditor, ce_symlist, ce_mru, ce_processes,
   ce_infos, ce_dubproject, ce_dialogs, ce_dubprojeditor,{$IFDEF UNIX} ce_gdb,{$ENDIF}
   ce_dfmt, ce_lcldragdrop, ce_projgroup, ce_projutils, ce_stringrange, ce_dastworx,
-  ce_halstead, ce_profileviewer, ce_semver, ce_dsgncontrols, ce_term, ce_newdubproj;
+  ce_halstead, ce_profileviewer, ce_semver, ce_dsgncontrols, ce_term, ce_newdubproj,ce_new;
 
 type
 
@@ -182,6 +182,7 @@ type
     MenuItem114: TMenuItem;
     MenuItem115: TMenuItem;
     MenuItem116: TMenuItem;
+    MenuItem117: TMenuItem;
     mnuGitBranch: TMenuItem;
     mnuItemDubDialog: TMenuItem;
     mnuItemHelp: TMenuItem;
@@ -329,9 +330,16 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormResize(Sender: TObject);
     procedure FormWindowStateChange(Sender: TObject);
+    procedure MenuItem117Click(Sender: TObject);
+    procedure MenuItem14Click(Sender: TObject);
+    procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItem6Click(Sender: TObject);
+    procedure MenuItem7Click(Sender: TObject);
     procedure mnuItemAboutClick(Sender: TObject);
     procedure mnuItemCheckUpdClick(Sender: TObject);
+    procedure mnuItemHelpClick(Sender: TObject);
     procedure mnuItemManualClick(Sender: TObject);
+    procedure mnuItemMruFileClick(Sender: TObject);
     procedure updateDocumentBasedAction(sender: TObject);
     procedure updateProjectBasedAction(sender: TObject);
     procedure updateDocEditBasedAction(sender: TObject);
@@ -383,7 +391,7 @@ type
     procedure DoFirstShow; override;
 
   private
-
+    fnewWidg: TCENewWidget;
     fGitIconIndex: integer;
     fImages: TImageList;
     fOptionCategories: TCEEditableOptionsSubject;
@@ -421,6 +429,8 @@ type
     fInfoWidg: TCEInfoWidget;
     fDubProjWidg: TCEDubProjectEditorWidget;
     fPrjGrpWidg: TCEProjectGroupWidget;
+
+
     {$IFDEF UNIX}
     fTermWWidg: TCETermWidget;
     fGdbWidg: TCEGdbWidget;
@@ -1559,6 +1569,7 @@ begin
   fOptEdWidg  := TCEOptionEditorWidget.create(self);
   fSymlWidg   := TCESymbolListWidget.create(self);
   fInfoWidg   := TCEInfoWidget.create(self);
+  fnewWidg    := TCENewWidget.create(self);
   fDubProjWidg:= TCEDubProjectEditorWidget.create(self);
   fDfmtWidg   := TCEDfmtWidget.create(self);
   fPrjGrpWidg := TCEProjectGroupWidget.create(self);
@@ -1583,6 +1594,7 @@ begin
   fWidgList.addWidget(@fOptEdWidg);
   fWidgList.addWidget(@fSymlWidg);
   fWidgList.addWidget(@fInfoWidg);
+  fWidgList.addWidget(@fnewWidg);
   fWidgList.addWidget(@fDubProjWidg);
   fWidgList.addWidget(@fDfmtWidg);
   fWidgList.addWidget(@fPrjGrpWidg);
@@ -2121,6 +2133,33 @@ begin
   snapTopSplitterToMenu;
 end;
 
+procedure TCEMainForm.MenuItem117Click(Sender: TObject);
+begin
+   newFile;
+  fNewWidg.setDoc(fDoc,self.fNativeProject);
+         fNewWidg.showWidget;
+end;
+
+procedure TCEMainForm.MenuItem14Click(Sender: TObject);
+begin
+
+end;
+
+procedure TCEMainForm.MenuItem1Click(Sender: TObject);
+begin
+
+end;
+
+procedure TCEMainForm.MenuItem6Click(Sender: TObject);
+begin
+
+end;
+
+procedure TCEMainForm.MenuItem7Click(Sender: TObject);
+begin
+
+end;
+
 procedure TCEMainForm.mnuItemAboutClick(Sender: TObject);
 begin
   fInfoWidg.showWidget;
@@ -2140,9 +2179,19 @@ begin
   else dlgOkInfo('No new release available or no connectivity');
 end;
 
+procedure TCEMainForm.mnuItemHelpClick(Sender: TObject);
+begin
+
+end;
+
 procedure TCEMainForm.mnuItemManualClick(Sender: TObject);
 begin
   OpenURL('https://bbasile.github.io/dexed/');
+end;
+
+procedure TCEMainForm.mnuItemMruFileClick(Sender: TObject);
+begin
+
 end;
 
 destructor TCEMainForm.destroy;
@@ -2659,6 +2708,7 @@ procedure TCEMainForm.actFileNewExecute(Sender: TObject);
 begin
   newFile;
   fDoc.setFocus;
+  // fnewWidg.showWidget;
 end;
 
 procedure TCEMainForm.actFileNewRunExecute(Sender: TObject);
