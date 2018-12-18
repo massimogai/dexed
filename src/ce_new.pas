@@ -50,7 +50,7 @@ type
     procedure newFile;
     procedure createClass;
     procedure updateFields;
-    function compileClass(currentClassName: string): string;
+    function compileClass(currentPackageName:string;currentClassName: string): string;
     function compileInterface(currentInterfaceName: string): string;
     function compileEnum(currentEnumName: string): string;
     function compileMain(currentEnumName: string): string;
@@ -97,6 +97,7 @@ begin
   basePath := fNativeProject.basePath + 'src/';
   self.ClassNameEditBox.Text := defaultClassName;
   FileNameLabel.Caption := basePath + defaultClassName + '.d';
+
 end;
 
 
@@ -147,13 +148,13 @@ begin
   TCESynMemo.Create(nil);
 end;
 
-function TCENewWidget.compileClass(currentClassName: string): string;
+function TCENewWidget.compileClass(currentPackageName:string;currentClassName: string): string;
 var
   classDef: string;
 begin
 
   classDef :=
-    'module ' + currentClassName + ';' + LineEnding + LineEnding +
+    'module ' + currentPackageName + ';' + LineEnding + LineEnding +
     'import std.stdio;' + LineEnding + LineEnding + 'class ' +
     currentClassName + LineEnding + '{' + LineEnding + '}';
   Result := classDef;
@@ -195,14 +196,15 @@ end;
 procedure TCENewWidget.createClass();
 
 var
-
+                  packageName: string;
   currentClassName: string;
 begin
+  packageName := PakageEdit.Text;
   currentClassName := ClassNameEditBox.Text;
   ForceDirectories(self.filePath);
 
   case selectedType of
-    0: fDoc.Text := compileClass(currentClassName);
+    0: fDoc.Text := compileClass(packageName,currentClassName);
     1: fDoc.Text := compileInterface(currentClassName);
     2: fDoc.Text := compileEnum(currentClassName);
     3: fDoc.Text := compileMain(currentClassName);

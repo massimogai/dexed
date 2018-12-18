@@ -2134,10 +2134,25 @@ begin
 end;
 
 procedure TCEMainForm.MenuItem117Click(Sender: TObject);
+
 begin
-   newFile;
-  fNewWidg.setDoc(fDoc,self.fNativeProject);
-         fNewWidg.showWidget;
+
+  if (fNativeProject.isNotNil) then begin
+    if( fNativeProject.hasSaved) then begin
+    newFile;
+    fNewWidg.setDoc(fDoc,self.fNativeProject);
+    fNewWidg.showWidget;
+    end
+    else
+    begin
+      dlgOkCancel('Save the project first.','WARN');
+    end
+    end
+  else
+  begin
+    dlgOkCancel('Create and Save a project first.','WARN');
+  end;
+
 end;
 
 procedure TCEMainForm.MenuItem14Click(Sender: TObject);
