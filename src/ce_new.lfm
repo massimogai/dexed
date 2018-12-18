@@ -54,7 +54,7 @@ inherited CENewWidget: TCENewWidget
       end
       object ClassNameEditBox: TEdit[3]
         Left = 488
-        Height = 36
+        Height = 32
         Top = 160
         Width = 272
         OnChange = ClassNameEditBoxChange
@@ -63,9 +63,9 @@ inherited CENewWidget: TCENewWidget
       end
       object Label1: TLabel[4]
         Left = 384
-        Height = 19
+        Height = 15
         Top = 216
-        Width = 68
+        Width = 64
         Caption = 'FIle Name'
         ParentColor = False
       end
@@ -78,9 +78,9 @@ inherited CENewWidget: TCENewWidget
       end
       object Label2: TLabel[6]
         Left = 376
-        Height = 19
+        Height = 15
         Top = 8
-        Width = 194
+        Width = 187
         Caption = 'Create new Class or Interface'
         ParentColor = False
       end
@@ -88,37 +88,37 @@ inherited CENewWidget: TCENewWidget
         Left = 384
         Height = 23
         Top = 248
-        Width = 176
+        Width = 172
         Caption = 'Add to Current Project.'
         TabOrder = 4
       end
       object ClassNameLabel: TLabel[8]
         Left = 384
-        Height = 19
+        Height = 15
         Top = 168
-        Width = 76
+        Width = 73
         Caption = 'ClassName'
         ParentColor = False
       end
       object FileNameLabel: TLabel[9]
         Left = 488
-        Height = 19
+        Height = 15
         Top = 216
-        Width = 101
+        Width = 93
         Caption = 'FileNameLabel'
         ParentColor = False
       end
       object PackageLabel: TLabel[10]
         Left = 384
-        Height = 19
+        Height = 15
         Top = 120
-        Width = 55
+        Width = 53
         Caption = 'Package'
         ParentColor = False
       end
       object PakageEdit: TEdit[11]
         Left = 488
-        Height = 36
+        Height = 32
         Top = 112
         Width = 272
         OnChange = PakageEditChange

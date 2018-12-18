@@ -525,7 +525,7 @@
         <PackageName Value="LCL"/>
       </Item8>
     </RequiredPackages>
-    <Units Count="60">
+    <Units Count="62">
       <Unit0>
         <Filename Value="dexed.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -841,6 +841,17 @@
         <ComponentName Value="CeNewDubProject"/>
         <ResourceBaseClass Value="Form"/>
       </Unit59>
+      <Unit60>
+        <Filename Value="..\src\ce_new.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CENewWidget"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit60>
+      <Unit61>
+        <Filename Value="..\src\ce_new.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit61>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
