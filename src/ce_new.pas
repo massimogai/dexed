@@ -22,45 +22,42 @@ type
     CreateButton: TButton;
     CancelButton: TButton;
     AddProjectCheckBox: TCheckBox;
-    ClassNameEditBox: TEdit;
-    PakageEdit: TEdit;
-    Label1: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
+    ObjectNameEditBox: TEdit;
+    PackageNameEdit: TEdit;
+    PackageNameLabel: TLabel;
+    ModuleNameEdit: TEdit;
+    FileNameLabel1: TLabel;
+    DescriptionLabel: TLabel;
     FileNameLabel: TLabel;
-    ClassNameLabel: TLabel;
-    PackageLabel: TLabel;
+    ObjectNameLabel: TLabel;
+    ModuleNameLabel: TLabel;
     TypeListBox: TListBox;
     fDoc: TCESynMemo;
     fNativeProject: TCENativeProject;
 
-    procedure ClassNameEditBoxChange(Sender: TObject);
+    procedure ObjectNameEditBoxChange(Sender: TObject);
     procedure CreateButtonClick(Sender: TObject);
     procedure CancelButtonClick(Sender: TObject);
     procedure ContentClick(Sender: TObject);
-    procedure PakageEditChange(Sender: TObject);
+    procedure PackageNameEditChange(Sender: TObject);
+    procedure ModuleNameEditChange(Sender: TObject);
     procedure TypeListBoxClick(Sender: TObject);
 
   private
     selectedType: integer;
-    filePath: string;
-    fullFileName: string;
-    procedure RefreshAllStatus;
-    function findCriticalyMissingTool: boolean;
     procedure newFile;
     procedure createClass;
     procedure updateFields;
-    function compileClass(currentPackageName:string;currentClassName: string): string;
-    function compileInterface(currentInterfaceName: string): string;
-    function compileEnum(currentEnumName: string): string;
-    function compileMain(currentEnumName: string): string;
+    function compileClass(currentPackageName: string; currentClassName: string): string;
+    function compileInterface(currentPackageName: string;
+      currentInterfaceName: string): string;
+    function compileEnum(currentPackageName: string; currentEnumName: string): string;
+    function compileMain(currentPackageName: string; currentEnumName: string): string;
 
   protected
-    procedure SetVisible(Value: boolean); override;
+
   public
     constructor Create(aOwner: TComponent); override;
-
-    property hasMissingTools: boolean read findCriticalyMissingTool;
     procedure setDoc(afDoc: TCESynMemo; afNativeProject: TCENativeProject);
   end;
 
@@ -75,36 +72,30 @@ begin
   toolbarVisible := False;
   fIsModal := True;
   fIsDockable := False;
-
-
-
+  AddProjectCheckBox.Checked := True;
   TypeListBox.Items.Clear;             //Delete all existing strings
   TypeListBox.Items.Add('D class.');
   TypeListBox.Items.Add('D interface.');
   TypeListBox.Items.Add('D enum.');
   TypeListBox.Items.Add('D Main unit.');
+  TypeListBox.Items.Add('D empty unit.');
+  TypeListBox.Items.Add('D runnable unit.');
   Realign;
 end;
 
 procedure TCENewWidget.setDoc(afDoc: TCESynMemo; afNativeProject: TCENativeProject);
 var
-  basePath: string;
   defaultClassName: string;
 begin
   defaultClassName := 'newClass';
   self.fDoc := afDoc;
   self.fNativeProject := afNativeProject;
-  basePath := fNativeProject.basePath + 'src/';
-  self.ClassNameEditBox.Text := defaultClassName;
-  FileNameLabel.Caption := basePath + defaultClassName + '.d';
+  TypeListBox.ItemIndex := 0;
+  DescriptionLabel.Caption := 'Create a D empty Class';
+  ObjectNameLabel.Caption := 'Class Name';
+  self.ObjectNameEditBox.Text := defaultClassName;
 
-end;
-
-
-function TCENewWidget.findCriticalyMissingTool: boolean;
-
-begin
-  Result := False;
+  updateFields();
 
 end;
 
@@ -113,11 +104,10 @@ begin
   createClass();
 end;
 
-procedure TCENewWidget.ClassNameEditBoxChange(Sender: TObject);
+procedure TCENewWidget.ObjectNameEditBoxChange(Sender: TObject);
 
 begin
   updateFields();
-
 end;
 
 procedure TCENewWidget.updateFields;
@@ -126,20 +116,27 @@ var
   packagePath: string;
   packageName: string;
   srcBasePath: string;
-  currentClassName: string;
-
+  fullFileName: string;
+  moduleName: string;
+  nameCondition: boolean;
+  objectName: string;
 begin
-  packageName := PakageEdit.Text;
+  moduleName := ModuleNameEdit.Text;
+  packageName := PackageNameEdit.Text;
   packagePath := packageName.Replace('.', '/');
+
   if (packagePath.length > 0) then
   begin
     packagePath := packagePath + '/';
   end;
-  currentClassName := ClassNameEditBox.Text;
+
   srcBasePath := fNativeProject.basePath + 'src/';
-  filePath := srcBasePath + packagePath;
-  fullFIleName := filePath + currentClassName + '.d';
-  FileNameLabel.Caption := fullFIleName;
+  fullFileName := srcBasePath + packagePath + moduleName + '.d';
+  objectName := ObjectNameEditBox.Text;
+  nameCondition := (TypeListBox.ItemIndex = 3) or (objectName.length <> 0);
+  CreateButton.Enabled := (moduleName.length <> 0) and nameCondition;
+
+  FileNameLabel.Caption := fullFileName;
 end;
 
 
@@ -148,7 +145,8 @@ begin
   TCESynMemo.Create(nil);
 end;
 
-function TCENewWidget.compileClass(currentPackageName:string;currentClassName: string): string;
+function TCENewWidget.compileClass(currentPackageName: string;
+  currentClassName: string): string;
 var
   classDef: string;
 begin
@@ -159,62 +157,96 @@ begin
     currentClassName + LineEnding + '{' + LineEnding + '}';
   Result := classDef;
 end;
-function TCENewWidget.compileInterface(currentInterfaceName: string): string;
+
+function TCENewWidget.compileInterface(currentPackageName: string;
+  currentInterfaceName: string): string;
 var
   classDef: string;
 begin
 
   classDef :=
-    'module ' + currentInterfaceName + ';' + LineEnding + LineEnding +
+    'module ' + currentPackageName + ';' + LineEnding + LineEnding +
     'import std.stdio;' + LineEnding + LineEnding + 'interface ' +
     currentInterfaceName + LineEnding + '{' + LineEnding + '}';
   Result := classDef;
 end;
-function TCENewWidget.compileEnum(currentEnumName: string): string;
+
+function TCENewWidget.compileEnum(currentPackageName: string;
+  currentEnumName: string): string;
 var
   classDef: string;
 begin
 
   classDef :=
-    'module ' + currentEnumName + ';' + LineEnding + LineEnding +
+    'module ' + currentPackageName + ';' + LineEnding + LineEnding +
     'import std.stdio;' + LineEnding + LineEnding + 'enum ' +
     currentEnumName + LineEnding + '{' + LineEnding + '}';
   Result := classDef;
 end;
-function TCENewWidget.compileMain(currentEnumName: string): string;
+
+function TCENewWidget.compileMain(currentPackageName: string;
+  currentEnumName: string): string;
 var
   classDef: string;
 begin
 
   classDef :=
-    'module ' + currentEnumName + ';' + LineEnding + LineEnding +
+    'module ' + currentPackageName + ';' + LineEnding + LineEnding +
     'import std.stdio;' + LineEnding + LineEnding + 'void main(string[] args) ' +
-     LineEnding + '{' + LineEnding + '}';
+    LineEnding + '{' + LineEnding + '}';
   Result := classDef;
 end;
 
 procedure TCENewWidget.createClass();
 
 var
-                  packageName: string;
+  moduleName: string;
+  packageName: string;
   currentClassName: string;
+  fullyQualifiedName: string;
+  filePath: string;
+  packagePath: string;
+  srcBasePath: string;
+  fullFileName: string;
 begin
-  packageName := PakageEdit.Text;
-  currentClassName := ClassNameEditBox.Text;
-  ForceDirectories(self.filePath);
+  moduleName := ModuleNameEdit.Text;
+  packageName := PackageNameEdit.Text;
+  currentClassName := ObjectNameEditBox.Text;
+
+  if (packageName.length > 0) then
+  begin
+    fullyQualifiedName := packageName + '.' + moduleName;
+  end
+  else
+  begin
+    fullyQualifiedName := moduleName;
+  end;
+
+  packagePath := packageName.Replace('.', '/');
+  if (packagePath.length > 0) then
+  begin
+    packagePath := packagePath + '/';
+  end;
+  srcBasePath := fNativeProject.basePath + 'src/';
+  filePath := srcBasePath + packagePath;
+
+  fullFileName := filePath + moduleName + '.d';
+  ForceDirectories(filePath);
 
   case selectedType of
-    0: fDoc.Text := compileClass(packageName,currentClassName);
-    1: fDoc.Text := compileInterface(currentClassName);
-    2: fDoc.Text := compileEnum(currentClassName);
-    3: fDoc.Text := compileMain(currentClassName);
+    0: fDoc.Text := compileClass(fullyQualifiedName, currentClassName);
+    1: fDoc.Text := compileInterface(fullyQualifiedName, currentClassName);
+    2: fDoc.Text := compileEnum(fullyQualifiedName, currentClassName);
+    3: fDoc.Text := compileMain(fullyQualifiedName, currentClassName);
 
   end;
 
   fDoc.SetFocus;
-  fDoc.saveToFile(self.fullFileName);
-
-  fNativeProject.addSource(self.fullFileName  );
+  fDoc.saveToFile(fullFileName);
+  if (AddProjectCheckBox.Checked) then
+  begin
+    fNativeProject.addSource(fullFileName);
+  end;
   Close();
 end;
 
@@ -225,10 +257,18 @@ end;
 
 procedure TCENewWidget.ContentClick(Sender: TObject);
 begin
-
+  updateFields();
 end;
 
-procedure TCENewWidget.PakageEditChange(Sender: TObject);
+procedure TCENewWidget.PackageNameEditChange(Sender: TObject);
+begin
+  updateFields();
+end;
+
+
+
+
+procedure TCENewWidget.ModuleNameEditChange(Sender: TObject);
 begin
   updateFields();
 end;
@@ -241,31 +281,60 @@ begin
   index := TypeListBox.ItemIndex;
   selectedType := index;
   case index of
-    0: Label3.Caption := 'Create a D empty Class';
-    1: Label3.Caption := 'Create a D empty Interface';
-    2: Label3.Caption := 'Create a D empty Enum';
-    3: Label3.Caption := 'Create a D main Unit';
+    0:
+    begin
+      DescriptionLabel.Caption := 'Create a D empty Class';
+      ObjectNameLabel.Caption := 'Class Name';
+      ObjectNameLabel.Visible := True;
+      ObjectNameEditBox.Visible := True;
+      ObjectNameEditBox.Text := 'NewClassName';
+      ModuleNameEdit.Text:='';
+
+    end;
+    1:
+    begin
+      DescriptionLabel.Caption := 'Create a D empty Interface';
+      ObjectNameLabel.Caption := 'Interface Name';
+      ObjectNameLabel.Visible := True;
+      ObjectNameEditBox.Visible := True;
+      ObjectNameEditBox.Text := 'NewInterfaceName';
+      ModuleNameEdit.Text:='';
+    end;
+
+    2:
+    begin
+      DescriptionLabel.Caption := 'Create a D empty Enum';
+      ObjectNameLabel.Caption := 'Enum Name';
+      ObjectNameLabel.Visible := True;
+      ObjectNameEditBox.Visible := True;
+      ObjectNameEditBox.Text := 'NewEnumName';
+      ModuleNameEdit.Text:='';
+    end;
+    3:
+    begin
+      DescriptionLabel.Caption := 'Create a D main Unit';
+      ObjectNameLabel.Visible := False;
+      ObjectNameEditBox.Visible := False;
+      ModuleNameEdit.Text:='';
+    end;
+    4:
+    begin
+      DescriptionLabel.Caption := 'Create a D empty Unit';
+      ObjectNameLabel.Visible := False;
+      ObjectNameEditBox.Visible := False;
+      ModuleNameEdit.Text:='';
+    end;
+    5:
+    begin
+      DescriptionLabel.Caption := 'Create a D runnable Unit';
+      ObjectNameLabel.Visible := False;
+      ObjectNameEditBox.Visible := False;
+      ModuleNameEdit.Text:='runnable';
+
+    end;
 
   end;
-  RefreshAllStatus;
-end;
 
-procedure TCENewWidget.RefreshAllStatus;
-var
-
-  s: string = '';
-
-begin
-
-  if s.isNotEmpty then
-    getMessageDisplay.message('Some tools cannot be found:' + s, nil, amcApp, amkWarn);
-end;
-
-procedure TCENewWidget.SetVisible(Value: boolean);
-begin
-  inherited;
-  if Visible then
-    RefreshAllStatus;
 end;
 
 end.
