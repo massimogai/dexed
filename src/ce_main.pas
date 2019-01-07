@@ -117,6 +117,7 @@ type
     actFileCloseAll: TAction;
     actFileNewClip: TAction;
     actEdFormat: TAction;
+    newAction: TAction;
     actProjGitPull: TAction;
     actProjGitBranchesUpd: TAction;
     actProjNewDialog: TAction;
@@ -340,6 +341,7 @@ type
     procedure mnuItemHelpClick(Sender: TObject);
     procedure mnuItemManualClick(Sender: TObject);
     procedure mnuItemMruFileClick(Sender: TObject);
+    procedure newActionExecute(Sender: TObject);
     procedure updateDocumentBasedAction(sender: TObject);
     procedure updateProjectBasedAction(sender: TObject);
     procedure updateDocEditBasedAction(sender: TObject);
@@ -2134,24 +2136,7 @@ begin
 end;
 
 procedure TCEMainForm.MenuItem117Click(Sender: TObject);
-
 begin
-
-  if (fNativeProject.isNotNil) then begin
-    if( fNativeProject.hasSaved) then begin
-    newFile;
-    fNewWidg.setDoc(fDoc,self.fNativeProject);
-    fNewWidg.showWidget;
-    end
-    else
-    begin
-      dlgOkCancel('Save the project first.','WARN');
-    end
-    end
-  else
-  begin
-    dlgOkCancel('Create and Save a project first.','WARN');
-  end;
 
 end;
 
@@ -2206,6 +2191,24 @@ end;
 
 procedure TCEMainForm.mnuItemMruFileClick(Sender: TObject);
 begin
+
+end;
+
+procedure TCEMainForm.newActionExecute(Sender: TObject);
+begin
+
+          if  not assigned(fProject) then
+    exit;
+    if(  fProject.filename.fileExists) then begin
+    newFile;
+    fNewWidg.setDoc(fDoc,self.fNativeProject);
+    fNewWidg.showWidget;
+    end
+    else
+    begin
+     dlgOkCancel('Save the project first.','WARN');
+    end
+
 
 end;
 

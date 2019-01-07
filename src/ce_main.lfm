@@ -25,8 +25,7 @@ object CEMainForm: TCEMainForm
         Action = actFileNew
       end
       object MenuItem117: TMenuItem
-        Caption = 'New'
-        OnClick = MenuItem117Click
+        Action = newAction
       end
       object MenuItem24: TMenuItem
         Action = actFileNewRun
@@ -189,10 +188,10 @@ object CEMainForm: TCEMainForm
           Action = actProjNewDialog
         end
         object MenuItem69: TMenuItem
-          Action = actProjNewDubJson
+          Action = actProjNewNative
         end
         object MenuItem70: TMenuItem
-          Action = actProjNewNative
+          Action = actProjNewDubJson
         end
       end
       object MenuItem30: TMenuItem
@@ -858,6 +857,12 @@ object CEMainForm: TCEMainForm
       Category = 'Project'
       Caption = 'Git pull'
       OnExecute = actProjGitPullExecute
+    end
+    object newAction: TAction
+      Category = 'File'
+      Caption = 'newAction'
+      OnExecute = newActionExecute
+      OnUpdate = updateProjectBasedAction
     end
   end
   object ApplicationProperties1: TApplicationProperties
