@@ -26,6 +26,7 @@ object CEMainForm: TCEMainForm
       end
       object MenuItem117: TMenuItem
         Action = newAction
+        ShortCut = 16429
       end
       object MenuItem24: TMenuItem
         Action = actFileNewRun
@@ -863,6 +864,7 @@ object CEMainForm: TCEMainForm
       Caption = 'newAction'
       OnExecute = newActionExecute
       OnUpdate = updateProjectBasedAction
+      ShortCut = 24654
     end
   end
   object ApplicationProperties1: TApplicationProperties

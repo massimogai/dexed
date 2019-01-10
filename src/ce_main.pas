@@ -1479,6 +1479,7 @@ begin
 
   i := loadIcon('DOCUMENT');
   actFileNew.ImageIndex:= i;
+  newAction.ImageIndex:= i;
   mnuProjNew.ImageIndex:= i;
   actProjNewNative.ImageIndex:= i;
   actProjNewDubJson.ImageIndex:= i;

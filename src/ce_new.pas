@@ -121,20 +121,21 @@ var
   nameCondition: boolean;
   objectName: string;
 begin
-  moduleName := ModuleNameEdit.Text;
+//  moduleName := ModuleNameEdit.Text;
   packageName := PackageNameEdit.Text;
   packagePath := packageName.Replace('.', '/');
-
+    objectName := ObjectNameEditBox.Text;
   if (packagePath.length > 0) then
   begin
     packagePath := packagePath + '/';
   end;
 
   srcBasePath := fNativeProject.basePath + 'src/';
-  fullFileName := srcBasePath + packagePath + moduleName + '.d';
-  objectName := ObjectNameEditBox.Text;
+  fullFileName := srcBasePath + packagePath + '/'+objectName + '.d';
+
   nameCondition := (TypeListBox.ItemIndex = 3) or (objectName.length <> 0);
-  CreateButton.Enabled := (moduleName.length <> 0) and nameCondition;
+  CreateButton.Enabled := nameCondition;
+ // CreateButton.Enabled := (moduleName.length <> 0) and nameCondition;
 
   FileNameLabel.Caption := fullFileName;
 end;
@@ -149,10 +150,13 @@ function TCENewWidget.compileClass(currentPackageName: string;
   currentClassName: string): string;
 var
   classDef: string;
+  moduleDef: string;
 begin
-
-  classDef :=
-    'module ' + currentPackageName + ';' + LineEnding + LineEnding +
+  classDef:='';
+     moduleDef:= 'module ' + currentPackageName + ';' + LineEnding + LineEnding ;
+     if(currentPackageName.length)>0then    classDef := moduleDef;
+  classDef :=         classDef
+    +
     'import std.stdio;' + LineEnding + LineEnding + 'class ' +
     currentClassName + LineEnding + '{' + LineEnding + '}';
   Result := classDef;
@@ -230,7 +234,7 @@ begin
   srcBasePath := fNativeProject.basePath + 'src/';
   filePath := srcBasePath + packagePath;
 
-  fullFileName := filePath + moduleName + '.d';
+  fullFileName := filePath + currentClassName + '.d';
   ForceDirectories(filePath);
 
   case selectedType of
