@@ -10,14 +10,14 @@ inherited CENewWidget: TCENewWidget
   ClientHeight = 578
   ClientWidth = 933
   inherited Back: TPanel
-    Height = 496
+    Height = 510
     Width = 760
     AutoSize = True
-    ClientHeight = 496
+    ClientHeight = 510
     ClientWidth = 760
     inherited Content: TPanel
       Height = 460
-      Top = 36
+      Top = 50
       Width = 760
       AutoSize = False
       ClientHeight = 460
@@ -54,7 +54,7 @@ inherited CENewWidget: TCENewWidget
       end
       object ObjectNameEditBox: TEdit[3]
         Left = 488
-        Height = 36
+        Height = 39
         Top = 216
         Width = 272
         OnChange = ObjectNameEditBoxChange
@@ -63,77 +63,76 @@ inherited CENewWidget: TCENewWidget
       end
       object FileNameLabel1: TLabel[4]
         Left = 8
-        Height = 19
+        Height = 28
         Top = 384
-        Width = 68
+        Width = 117
         Caption = 'File Name'
         ParentColor = False
       end
       object DescriptionLabel: TLabel[5]
         Left = 304
-        Height = 19
+        Height = 28
         Top = 48
-        Width = 73
+        Width = 131
         Caption = 'description'
         ParentColor = False
       end
       object AddProjectCheckBox: TCheckBox[6]
         Left = 304
-        Height = 23
+        Height = 32
         Top = 312
-        Width = 176
+        Width = 296
         Caption = 'Add to Current Project.'
         TabOrder = 4
       end
       object ObjectNameLabel: TLabel[7]
         Left = 304
-        Height = 19
+        Height = 28
         Top = 224
-        Width = 76
+        Width = 131
         Caption = 'ClassName'
         ParentColor = False
       end
       object FileNameLabel: TLabel[8]
         Left = 168
-        Height = 19
+        Height = 28
         Top = 384
-        Width = 48
+        Width = 96
         Caption = '............'
         ParentColor = False
         WordWrap = True
       end
       object ModuleNameLabel: TLabel[9]
         Left = 304
-        Height = 19
+        Height = 28
         Top = 168
-        Width = 92
+        Width = 163
         Caption = 'Module Name'
         ParentColor = False
-        Visible = False
       end
       object ModuleNameEdit: TEdit[10]
         Left = 488
-        Height = 36
+        Height = 39
         Top = 159
         Width = 272
         OnChange = ModuleNameEditChange
         TabOrder = 5
-        Visible = False
       end
       object PackageNameLabel: TLabel[11]
         Left = 304
-        Height = 19
+        Height = 28
         Top = 112
-        Width = 95
+        Width = 167
         Caption = 'PackageName'
         ParentColor = False
       end
       object PackageNameEdit: TEdit[12]
         Left = 488
-        Height = 36
+        Height = 39
         Top = 104
         Width = 272
         OnChange = PackageNameEditChange
+        OnKeyPress = PackageNameEditKeyPress
         TabOrder = 6
       end
     end

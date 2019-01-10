@@ -7,6 +7,7 @@ object CEMainForm: TCEMainForm
   Caption = 'Coedit'
   ClientHeight = 228
   ClientWidth = 816
+  DesignTimePPI = 144
   Menu = mainMenu
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
@@ -861,7 +862,7 @@ object CEMainForm: TCEMainForm
     end
     object newAction: TAction
       Category = 'File'
-      Caption = 'newAction'
+      Caption = 'New Wizard'
       OnExecute = newActionExecute
       OnUpdate = updateProjectBasedAction
       ShortCut = 24654

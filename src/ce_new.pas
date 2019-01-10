@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   {$IFDEF WINDOWS}Windows,{$ENDIF}
-  StdCtrls, ExtCtrls, Buttons, Menus, ComCtrls, ce_widget, ce_common,
+  StdCtrls, ExtCtrls, Buttons, Menus, ComCtrls, MaskEdit, ce_widget, ce_common,
   ce_sharedres, ce_interfaces, ce_dsgncontrols, ce_synmemo, ce_ceproject;
 
 type
@@ -41,6 +41,7 @@ type
     procedure ContentClick(Sender: TObject);
     procedure PackageNameEditChange(Sender: TObject);
     procedure ModuleNameEditChange(Sender: TObject);
+    procedure PackageNameEditKeyPress(Sender: TObject; var Key: char);
     procedure TypeListBoxClick(Sender: TObject);
 
   private
@@ -72,6 +73,7 @@ begin
   toolbarVisible := False;
   fIsModal := True;
   fIsDockable := False;
+
   AddProjectCheckBox.Checked := True;
   TypeListBox.Items.Clear;             //Delete all existing strings
   TypeListBox.Items.Add('D class.');
@@ -121,7 +123,7 @@ var
   nameCondition: boolean;
   objectName: string;
 begin
-//  moduleName := ModuleNameEdit.Text;
+  moduleName := ModuleNameEdit.Text;
   packageName := PackageNameEdit.Text;
   packagePath := packageName.Replace('.', '/');
     objectName := ObjectNameEditBox.Text;
@@ -131,11 +133,11 @@ begin
   end;
 
   srcBasePath := fNativeProject.basePath + 'src/';
-  fullFileName := srcBasePath + packagePath + '/'+objectName + '.d';
+  fullFileName := srcBasePath + packagePath + '/'+moduleName + '.d';
 
   nameCondition := (TypeListBox.ItemIndex = 3) or (objectName.length <> 0);
-  CreateButton.Enabled := nameCondition;
- // CreateButton.Enabled := (moduleName.length <> 0) and nameCondition;
+
+ CreateButton.Enabled := (moduleName.length <> 0) and nameCondition;
 
   FileNameLabel.Caption := fullFileName;
 end;
@@ -145,6 +147,8 @@ procedure TCENewWidget.newFile;
 begin
   TCESynMemo.Create(nil);
 end;
+
+
 
 function TCENewWidget.compileClass(currentPackageName: string;
   currentClassName: string): string;
@@ -217,6 +221,7 @@ begin
   packageName := PackageNameEdit.Text;
   currentClassName := ObjectNameEditBox.Text;
 
+
   if (packageName.length > 0) then
   begin
     fullyQualifiedName := packageName + '.' + moduleName;
@@ -234,7 +239,7 @@ begin
   srcBasePath := fNativeProject.basePath + 'src/';
   filePath := srcBasePath + packagePath;
 
-  fullFileName := filePath + currentClassName + '.d';
+  fullFileName := filePath + moduleName + '.d';
   ForceDirectories(filePath);
 
   case selectedType of
@@ -275,6 +280,20 @@ end;
 procedure TCENewWidget.ModuleNameEditChange(Sender: TObject);
 begin
   updateFields();
+end;
+
+procedure TCENewWidget.PackageNameEditKeyPress(Sender: TObject; var Key: char);
+begin
+  if (Key<> #08) then begin
+   if not (Key in ['A'..'Z', 'a'..'z', '0'..'9']) then
+begin
+
+  Key := #0;   //Cancel the input
+
+
+end;
+   end;
+
 end;
 
 procedure TCENewWidget.TypeListBoxClick(Sender: TObject);
