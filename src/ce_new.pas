@@ -35,6 +35,7 @@ type
     fDoc: TCESynMemo;
     fNativeProject: TCENativeProject;
 
+    procedure ModuleNameEditKeyPress(Sender: TObject; var Key: char);
     procedure ObjectNameEditBoxChange(Sender: TObject);
     procedure CreateButtonClick(Sender: TObject);
     procedure CancelButtonClick(Sender: TObject);
@@ -112,6 +113,17 @@ begin
   updateFields();
 end;
 
+procedure TCENewWidget.ModuleNameEditKeyPress(Sender: TObject; var Key: char);
+begin
+
+   if not (Key in ['A'..'Z', 'a'..'z', '0'..'9',#08]) then
+begin
+  Key := #0;   //Cancel the input
+end;
+   end;
+
+
+
 procedure TCENewWidget.updateFields;
 var
 
@@ -147,6 +159,8 @@ procedure TCENewWidget.newFile;
 begin
   TCESynMemo.Create(nil);
 end;
+
+
 
 
 
@@ -284,8 +298,8 @@ end;
 
 procedure TCENewWidget.PackageNameEditKeyPress(Sender: TObject; var Key: char);
 begin
-  if (Key<> #08) then begin
-   if not (Key in ['A'..'Z', 'a'..'z', '0'..'9']) then
+
+   if not (Key in ['A'..'Z', 'a'..'z', '0'..'9',#08]) then
 begin
 
   Key := #0;   //Cancel the input
@@ -294,7 +308,7 @@ begin
 end;
    end;
 
-end;
+
 
 procedure TCENewWidget.TypeListBoxClick(Sender: TObject);
 var
