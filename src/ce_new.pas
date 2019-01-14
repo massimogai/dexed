@@ -22,11 +22,11 @@ type
     CreateButton: TButton;
     CancelButton: TButton;
     AddProjectCheckBox: TCheckBox;
+    MessageLabel: TLabel;
     ObjectNameEditBox: TEdit;
     PackageNameEdit: TEdit;
     PackageNameLabel: TLabel;
     ModuleNameEdit: TEdit;
-    FileNameLabel1: TLabel;
     DescriptionLabel: TLabel;
     FileNameLabel: TLabel;
     ObjectNameLabel: TLabel;
@@ -35,6 +35,7 @@ type
     fDoc: TCESynMemo;
     fNativeProject: TCENativeProject;
 
+    procedure MessageLabelClick(Sender: TObject);
     procedure ModuleNameEditKeyPress(Sender: TObject; var Key: char);
     procedure ObjectNameEditBoxChange(Sender: TObject);
     procedure CreateButtonClick(Sender: TObject);
@@ -116,11 +117,16 @@ end;
 procedure TCENewWidget.ModuleNameEditKeyPress(Sender: TObject; var Key: char);
 begin
 
-   if not (Key in ['A'..'Z', 'a'..'z', '0'..'9',#08]) then
-begin
-  Key := #0;   //Cancel the input
+  if not (Key in ['A'..'Z', 'a'..'z', '0'..'9', #08]) then
+  begin
+    Key := #0;   //Cancel the input
+  end;
 end;
-   end;
+
+procedure TCENewWidget.MessageLabelClick(Sender: TObject);
+begin
+
+end;
 
 
 
@@ -133,25 +139,37 @@ var
   fullFileName: string;
   moduleName: string;
   nameCondition: boolean;
+  fileExist: boolean;
   objectName: string;
 begin
   moduleName := ModuleNameEdit.Text;
   packageName := PackageNameEdit.Text;
   packagePath := packageName.Replace('.', '/');
-    objectName := ObjectNameEditBox.Text;
+  objectName := ObjectNameEditBox.Text;
   if (packagePath.length > 0) then
   begin
     packagePath := packagePath + '/';
   end;
 
   srcBasePath := fNativeProject.basePath + 'src/';
-  fullFileName := srcBasePath + packagePath + '/'+moduleName + '.d';
+  fullFileName := srcBasePath + packagePath + '/' + moduleName + '.d';
 
   nameCondition := (TypeListBox.ItemIndex = 3) or (objectName.length <> 0);
 
- CreateButton.Enabled := (moduleName.length <> 0) and nameCondition;
+
 
   FileNameLabel.Caption := fullFileName;
+  if fileexists(fullFileName) then
+  begin
+    MessageLabel.Caption := 'Module already exist.';
+    fileExist:=true;
+  end
+  else
+  begin
+    MessageLabel.Caption := '';
+    fileExist:=false;
+  end;
+  CreateButton.Enabled := (moduleName.length <> 0) and nameCondition and not fileExist;
 end;
 
 
@@ -163,20 +181,18 @@ end;
 
 
 
-
 function TCENewWidget.compileClass(currentPackageName: string;
   currentClassName: string): string;
 var
   classDef: string;
   moduleDef: string;
 begin
-  classDef:='';
-     moduleDef:= 'module ' + currentPackageName + ';' + LineEnding + LineEnding ;
-     if(currentPackageName.length)>0then    classDef := moduleDef;
-  classDef :=         classDef
-    +
-    'import std.stdio;' + LineEnding + LineEnding + 'class ' +
-    currentClassName + LineEnding + '{' + LineEnding + '}';
+  classDef := '';
+  moduleDef := 'module ' + currentPackageName + ';' + LineEnding + LineEnding;
+  if (currentPackageName.length) > 0 then
+    classDef := moduleDef;
+  classDef := classDef + 'import std.stdio;' + LineEnding + LineEnding +
+    'class ' + currentClassName + LineEnding + '{' + LineEnding + '}';
   Result := classDef;
 end;
 
@@ -184,12 +200,14 @@ function TCENewWidget.compileInterface(currentPackageName: string;
   currentInterfaceName: string): string;
 var
   classDef: string;
+  moduleDef: string;
 begin
-
-  classDef :=
-    'module ' + currentPackageName + ';' + LineEnding + LineEnding +
-    'import std.stdio;' + LineEnding + LineEnding + 'interface ' +
-    currentInterfaceName + LineEnding + '{' + LineEnding + '}';
+  classDef := '';
+  moduleDef := 'module ' + currentPackageName + ';' + LineEnding + LineEnding;
+  if (currentPackageName.length) > 0 then
+    classDef := moduleDef;
+  classDef := classDef + 'import std.stdio;' + LineEnding + LineEnding +
+    'interface ' + currentInterfaceName + LineEnding + '{' + LineEnding + '}';
   Result := classDef;
 end;
 
@@ -197,12 +215,15 @@ function TCENewWidget.compileEnum(currentPackageName: string;
   currentEnumName: string): string;
 var
   classDef: string;
+  moduleDef: string;
 begin
 
-  classDef :=
-    'module ' + currentPackageName + ';' + LineEnding + LineEnding +
-    'import std.stdio;' + LineEnding + LineEnding + 'enum ' +
-    currentEnumName + LineEnding + '{' + LineEnding + '}';
+  classDef := '';
+  moduleDef := 'module ' + currentPackageName + ';' + LineEnding + LineEnding;
+  if (currentPackageName.length) > 0 then
+    classDef := moduleDef;
+  classDef := classDef + 'import std.stdio;' + LineEnding +
+    LineEnding + 'enum ' + currentEnumName + LineEnding + '{' + LineEnding + '}';
   Result := classDef;
 end;
 
@@ -210,12 +231,15 @@ function TCENewWidget.compileMain(currentPackageName: string;
   currentEnumName: string): string;
 var
   classDef: string;
+  moduleDef: string;
 begin
 
-  classDef :=
-    'module ' + currentPackageName + ';' + LineEnding + LineEnding +
-    'import std.stdio;' + LineEnding + LineEnding + 'void main(string[] args) ' +
-    LineEnding + '{' + LineEnding + '}';
+  classDef := '';
+  moduleDef := 'module ' + currentPackageName + ';' + LineEnding + LineEnding;
+  if (currentPackageName.length) > 0 then
+    classDef := moduleDef;
+  classDef := classDef + 'import std.stdio;' + LineEnding +
+    LineEnding + 'void main(string[] args) ' + LineEnding + '{' + LineEnding + '}';
   Result := classDef;
 end;
 
@@ -299,14 +323,13 @@ end;
 procedure TCENewWidget.PackageNameEditKeyPress(Sender: TObject; var Key: char);
 begin
 
-   if not (Key in ['A'..'Z', 'a'..'z', '0'..'9',#08]) then
-begin
+  if not (Key in ['A'..'Z', 'a'..'z', '0'..'9', #08, '.']) then
+  begin
 
-  Key := #0;   //Cancel the input
+    Key := #0;   //Cancel the input
 
-
+  end;
 end;
-   end;
 
 
 
@@ -325,7 +348,7 @@ begin
       ObjectNameLabel.Visible := True;
       ObjectNameEditBox.Visible := True;
       ObjectNameEditBox.Text := 'NewClassName';
-      ModuleNameEdit.Text:='';
+      ModuleNameEdit.Text := '';
 
     end;
     1:
@@ -335,7 +358,7 @@ begin
       ObjectNameLabel.Visible := True;
       ObjectNameEditBox.Visible := True;
       ObjectNameEditBox.Text := 'NewInterfaceName';
-      ModuleNameEdit.Text:='';
+      ModuleNameEdit.Text := '';
     end;
 
     2:
@@ -345,28 +368,28 @@ begin
       ObjectNameLabel.Visible := True;
       ObjectNameEditBox.Visible := True;
       ObjectNameEditBox.Text := 'NewEnumName';
-      ModuleNameEdit.Text:='';
+      ModuleNameEdit.Text := '';
     end;
     3:
     begin
       DescriptionLabel.Caption := 'Create a D main Unit';
       ObjectNameLabel.Visible := False;
       ObjectNameEditBox.Visible := False;
-      ModuleNameEdit.Text:='';
+      ModuleNameEdit.Text := '';
     end;
     4:
     begin
       DescriptionLabel.Caption := 'Create a D empty Unit';
       ObjectNameLabel.Visible := False;
       ObjectNameEditBox.Visible := False;
-      ModuleNameEdit.Text:='';
+      ModuleNameEdit.Text := '';
     end;
     5:
     begin
       DescriptionLabel.Caption := 'Create a D runnable Unit';
       ObjectNameLabel.Visible := False;
       ObjectNameEditBox.Visible := False;
-      ModuleNameEdit.Text:='runnable';
+      ModuleNameEdit.Text := 'runnable';
 
     end;
 
