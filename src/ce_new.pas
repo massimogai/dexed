@@ -56,6 +56,10 @@ type
       currentInterfaceName: string): string;
     function compileEnum(currentPackageName: string; currentEnumName: string): string;
     function compileMain(currentPackageName: string; currentEnumName: string): string;
+     function compileClassBody( currentClassName: string): string;
+      function compileInterfaceBody(currentClassName: string): string;
+     function compileEnumBody(currentClassName: string): string;
+     function  compileMainBody(currentClassName: string): string;
 
   protected
 
@@ -139,7 +143,7 @@ var
   fullFileName: string;
   moduleName: string;
   nameCondition: boolean;
-  fileExist: boolean;
+
   objectName: string;
 begin
   moduleName := ModuleNameEdit.Text;
@@ -161,15 +165,16 @@ begin
   FileNameLabel.Caption := fullFileName;
   if fileexists(fullFileName) then
   begin
-    MessageLabel.Caption := 'Module already exist.';
-    fileExist:=true;
+    MessageLabel.Caption :=
+      'Module already exist. The new class will be appended at the of the file';
+
   end
   else
   begin
     MessageLabel.Caption := '';
-    fileExist:=false;
+
   end;
-  CreateButton.Enabled := (moduleName.length <> 0) and nameCondition and not fileExist;
+  CreateButton.Enabled := (moduleName.length <> 0) and nameCondition;
 end;
 
 
@@ -222,8 +227,8 @@ begin
   moduleDef := 'module ' + currentPackageName + ';' + LineEnding + LineEnding;
   if (currentPackageName.length) > 0 then
     classDef := moduleDef;
-  classDef := classDef + 'import std.stdio;' + LineEnding +
-    LineEnding + 'enum ' + currentEnumName + LineEnding + '{' + LineEnding + '}';
+  classDef := classDef + 'import std.stdio;' + LineEnding + LineEnding +
+    'enum ' + currentEnumName + LineEnding + '{' + LineEnding + '}';
   Result := classDef;
 end;
 
@@ -238,10 +243,37 @@ begin
   moduleDef := 'module ' + currentPackageName + ';' + LineEnding + LineEnding;
   if (currentPackageName.length) > 0 then
     classDef := moduleDef;
-  classDef := classDef + 'import std.stdio;' + LineEnding +
-    LineEnding + 'void main(string[] args) ' + LineEnding + '{' + LineEnding + '}';
+  classDef := classDef + 'import std.stdio;' + LineEnding + LineEnding +
+    'void main(string[] args) ' + LineEnding + '{' + LineEnding + '}';
   Result := classDef;
 end;
+function compileClassBody( currentClassName: string): string;
+var
+  classDef: string;
+begin
+  Result := classDef;
+  end;
+     function compileInterfaceBody(currentClassName: string): string;
+     var
+  classDef: string;
+     begin
+       Result := classDef;
+  end;
+    function compileEnumBody(currentClassName: string): string;
+    var
+  classDef: string;
+    begin
+      Result := classDef;
+  end;
+    function  compileMainBody(currentClassName: string): string;
+    var
+  classDef: string;
+    begin
+      Result := classDef;
+  end;
+
+
+
 
 procedure TCENewWidget.createClass();
 
@@ -254,6 +286,9 @@ var
   packagePath: string;
   srcBasePath: string;
   fullFileName: string;
+  fileExist: boolean;
+  code: string;
+   f : TextFile;
 begin
   moduleName := ModuleNameEdit.Text;
   packageName := PackageNameEdit.Text;
@@ -278,21 +313,43 @@ begin
   filePath := srcBasePath + packagePath;
 
   fullFileName := filePath + moduleName + '.d';
-  ForceDirectories(filePath);
 
-  case selectedType of
-    0: fDoc.Text := compileClass(fullyQualifiedName, currentClassName);
-    1: fDoc.Text := compileInterface(fullyQualifiedName, currentClassName);
-    2: fDoc.Text := compileEnum(fullyQualifiedName, currentClassName);
-    3: fDoc.Text := compileMain(fullyQualifiedName, currentClassName);
-
-  end;
-
-  fDoc.SetFocus;
-  fDoc.saveToFile(fullFileName);
-  if (AddProjectCheckBox.Checked) then
+  fileExist := fileexists(fullFileName);
+  if (not fileExist) then
   begin
-    fNativeProject.addSource(fullFileName);
+    ForceDirectories(filePath);
+
+    case selectedType of
+      0: fDoc.Text := compileClass(fullyQualifiedName, currentClassName);
+      1: fDoc.Text := compileInterface(fullyQualifiedName, currentClassName);
+      2: fDoc.Text := compileEnum(fullyQualifiedName, currentClassName);
+      3: fDoc.Text := compileMain(fullyQualifiedName, currentClassName);
+
+    end;
+
+    fDoc.SetFocus;
+    fDoc.saveToFile(fullFileName);
+    if (AddProjectCheckBox.Checked) then
+    begin
+      fNativeProject.addSource(fullFileName);
+    end;
+  end
+  else
+  begin
+    case selectedType of
+      0: code := compileClassBody( currentClassName);
+      1: code := compileInterfaceBody(currentClassName);
+      2: code := compileEnumBody(currentClassName);
+      3: code := compileMainBody(currentClassName);
+
+    end;
+    AssignFile(f,  fullFileName);
+    Append(f);
+  Writeln (f,code);
+  close (f);
+  read( f,code);
+  fDoc.Text := code;
+  fDoc.SetFocus;
   end;
   Close();
 end;
