@@ -56,10 +56,10 @@ type
       currentInterfaceName: string): string;
     function compileEnum(currentPackageName: string; currentEnumName: string): string;
     function compileMain(currentPackageName: string; currentEnumName: string): string;
-     function compileClassBody( currentClassName: string): string;
-      function compileInterfaceBody(currentClassName: string): string;
-     function compileEnumBody(currentClassName: string): string;
-     function  compileMainBody(currentClassName: string): string;
+    function compileClassBody(currentClassName: string): string;
+    function compileInterfaceBody(currentInterfaceName: string): string;
+    function compileEnumBody(currentEnumName: string): string;
+    function compileMainBody(currentClassName: string): string;
 
   protected
 
@@ -247,30 +247,39 @@ begin
     'void main(string[] args) ' + LineEnding + '{' + LineEnding + '}';
   Result := classDef;
 end;
-function compileClassBody( currentClassName: string): string;
+
+function TCENewWidget.compileClassBody(currentClassName: string): string;
 var
   classDef: string;
 begin
+  classDef := 'class ' + currentClassName + LineEnding + '{' + LineEnding + '}';
   Result := classDef;
-  end;
-     function compileInterfaceBody(currentClassName: string): string;
-     var
+end;
+
+function TCENewWidget.compileInterfaceBody(currentInterfaceName: string): string;
+var
   classDef: string;
-     begin
-       Result := classDef;
-  end;
-    function compileEnumBody(currentClassName: string): string;
-    var
+begin
+  classDef := 'interface ' + currentInterfaceName + LineEnding +
+    '{' + LineEnding + '}';
+  Result := classDef;
+end;
+
+function TCENewWidget.compileEnumBody(currentEnumName: string): string;
+var
   classDef: string;
-    begin
-      Result := classDef;
-  end;
-    function  compileMainBody(currentClassName: string): string;
-    var
+begin
+  classDef := 'enum ' + currentEnumName + LineEnding + '{' + LineEnding + '}';
+  Result := classDef;
+end;
+
+function TCENewWidget.compileMainBody(currentClassName: string): string;
+var
   classDef: string;
-    begin
-      Result := classDef;
-  end;
+begin
+  classDef := 'void main(string[] args) ' + LineEnding + '{' + LineEnding + '}';
+  Result := classDef;
+end;
 
 
 
@@ -288,7 +297,7 @@ var
   fullFileName: string;
   fileExist: boolean;
   code: string;
-   f : TextFile;
+  f: TextFile;
 begin
   moduleName := ModuleNameEdit.Text;
   packageName := PackageNameEdit.Text;
@@ -337,19 +346,34 @@ begin
   else
   begin
     case selectedType of
-      0: code := compileClassBody( currentClassName);
+      0: code := compileClassBody(currentClassName);
       1: code := compileInterfaceBody(currentClassName);
       2: code := compileEnumBody(currentClassName);
       3: code := compileMainBody(currentClassName);
 
     end;
-    AssignFile(f,  fullFileName);
+     try
+    AssignFile(f, fullFileName);
     Append(f);
-  Writeln (f,code);
-  close (f);
-  read( f,code);
-  fDoc.Text := code;
-  fDoc.SetFocus;
+    Writeln(f, code);
+    CloseFile(f);
+           AssignFile(f, fullFileName);
+           reset(f);
+
+
+    while not eof(f) do
+                      begin
+                        readln(f,code); //linefromfile is a string
+                         fDoc.append(code);
+                      end;
+
+    except
+    on E: EInOutError do
+     writeln('File handling error occurred. Details: ', E.Message);
+  end;
+
+
+    fDoc.SetFocus;
   end;
   Close();
 end;
